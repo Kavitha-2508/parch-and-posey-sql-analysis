@@ -99,11 +99,12 @@ company_avg AS (
   SELECT AVG(total_amt_usd) AS avg_sales FROM orders
 )
 SELECT region_name,
-       ROUND(avg_sales, 2) AS region_avg_sales,
-       CASE WHEN avg_sales > (SELECT avg_sales FROM company_avg)
-            THEN 'Above Average' ELSE 'Below Average' END AS category
+       ROUND(region_avg.avg_sales, 2) AS region_avg_usd,
+       ROUND((SELECT avg_sales FROM company_avg), 2) AS company_avg,
+       CASE WHEN region_avg.avg_sales > (SELECT avg_sales FROM company_avg)
+            THEN 'Above Average' ELSE 'Below Average' END AS comparison
 FROM region_avg
-ORDER BY avg_sales DESC;
+ORDER BY region_avg.avg_sales DESC;
 
 -- Q12: What are the total quantities of each paper type sold for the top region?
 -- "Top region" = Northeast, the highest by total USD sales from Q10.
